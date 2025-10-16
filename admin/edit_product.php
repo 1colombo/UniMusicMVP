@@ -168,7 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['atualizar'])) {
                 <?php if ($produto['imagem']): ?>
                     <div class="mt-2">
                         <small class="form-text text-muted">Imagem atual:</small><br>
-                        <img src="../uploads/<?= htmlspecialchars($produto['imagem']) ?>" alt="Imagem atual do produto" style="max-width: 150px; height: auto; border-radius: 5px; margin-top: 5px;">
+                        <img src="../images/<?= htmlspecialchars($produto['imagem']) ?>" alt="Imagem atual do produto" style="max-width: 150px; height: auto; border-radius: 5px; margin-top: 5px;">
                     </div>
                 <?php endif; ?>
             </div>
