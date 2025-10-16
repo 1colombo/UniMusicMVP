@@ -29,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_produto'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Gerenciar Produtos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
@@ -53,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_produto'])) {
                             <th style="width: 100px;">Preço</th>
                             <th style="width: 120px;">Categoria</th>
                             <th style="width: 50px;">Estoque</th>
-                            <th style="width: 100px;">Ações</th>
+                            <th style="width: 50px;">Ações</th>
                         </tr>
                     </thead>  
               <tbody>
@@ -79,12 +80,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_produto'])) {
                     <td><?= htmlspecialchars($produto['categoria']) ?></td>
                     <td><?= htmlspecialchars($produto['estoqueProduto']) ?></td>
                     <td>
-                      <a href="edit_product.php?id=<?= $produto['idProduto'] ?>" class="btn btn-warning btn-sm">Editar</a>
+                      <a 
+                        href="edit_product.php?id=<?= $produto['idProduto'] ?>" class="btn btn-warning btn-sm">
+                        <i class="bi bi-pencil-square"></i>
+                      </a>
 
                       <form action="" method="POST" class="d-inline">
                         <input type="hidden" name="id" value="<?= $produto['idProduto'] ?>">
                         <button type="submit" name="delete_produto" class="btn btn-danger btn-sm" onclick="return confirm('Deseja realmente excluir este produto?')">
-                          Excluir
+                          <i class="bi bi-trash-fill"></i>
                         </button>
                       </form>
                     </td>
