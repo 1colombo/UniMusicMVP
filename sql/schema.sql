@@ -78,7 +78,7 @@ CREATE TABLE `produto` (
   `descricaoProduto` text DEFAULT NULL,
   `precoProduto` decimal(10,2) NOT NULL,
   `estoqueProduto` int(11) NOT NULL DEFAULT 0,
-  `imagemUrl` varchar(255) DEFAULT NULL,
+  `imagem` varchar(255) DEFAULT NULL,
   `idCategoria` int(11) NOT NULL,
   PRIMARY KEY (`idProduto`),
   KEY `fk_produto_categoriaproduto` (`idCategoria`),
