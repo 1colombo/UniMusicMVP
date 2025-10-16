@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_produto'])) {
         <div class="card">
           <div class="card-header">
             <h4>Lista de Produtos
-              <a href="../admin/produto_create.php" class="btn btn-dark float-end">Adicionar Produto</a>
+              <a href="../admin/create_product.php" class="btn btn-dark float-end">Adicionar Produto</a>
             </h4>
           </div>
           <div class="card-body">

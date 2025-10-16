@@ -2,17 +2,17 @@
 // (Este bloco de código assume que o 'init.php' já foi incluído na página principal antes desta navbar)
 
 // Se a variável de conexão não existir, tenta conectar (medida de segurança)
-if (!isset($conexao) || !$conexao) {
-    $conexao = connectBanco();
+if (!isset($connect) || !$connect) {
+    $connect = connectBanco();
 }
 
 // Consulta as categorias de produto para o menu dropdown
 $categorias_query = false; // Inicializa como false
-if ($conexao) {
+if ($connect) {
     $categorias_sql = "SELECT idCategoria, nome FROM categoriaproduto ORDER BY nome ASC";
-    $categorias_query = mysqli_query($conexao, $categorias_sql);
+    $categorias_query = mysqli_query($connect, $categorias_sql);
     if (!$categorias_query) {
-        error_log("Erro ao buscar categorias na navbar: " . mysqli_error($conexao));
+        error_log("Erro ao buscar categorias na navbar: " . mysqli_error($connect));
     }
 }
 
