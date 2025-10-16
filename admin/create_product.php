@@ -83,14 +83,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php include_once __DIR__ . '/../public/navbar.php'; // Inclui a navbar ?>
 
 <div class="container py-5">
-    <?php include_once __DIR__ . '/../config/message.php'; // Exibe mensagens de sucesso/erro ?>
-    
-    <h1 class="mb-4">Adicionar Novo Produto</h1>
-    <form method="POST" enctype="multipart/form-data">
-        <div class="mb-3">
-            <label for="nomeProduto" class="form-label">Nome do Produto</label>
-            <input type="text" class="form-control" id="nomeProduto" name="nomeProduto" required>
-        </div>
+        <?php include_once __DIR__ . '/../config/message.php'; ?>
+        
+        <div class="form-container">
+            <h1 class="mb-4 text-center">Adicionar Novo Produto</h1>
+            <form method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="nomeProduto" class="form-label">Nome do Produto</label>
+                    <input type="text" class="form-control" id="nomeProduto" name="nomeProduto" required>
+                </div>
 
         <div class="mb-3">
             <label for="descricaoProduto" class="form-label">Descrição</label>
@@ -133,8 +134,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="file" class="form-control" id="imagem" name="imagem" accept="image/jpeg, image/png, image/webp">
         </div>
 
-        <button type="submit" class="btn btn-primary">Cadastrar Produto</button>
-        <a href="product_management.php" class="btn btn-secondary ms-2">Voltar</a>
+        <div class="mt-4">
+            <button type="submit" class="btn btn-custom-primary">Cadastrar Produto</button>
+            <a href="product_management.php" class="btn btn-secondary ms-2">Voltar</a>
+        </div>
     </form>
 </div>
 

@@ -33,34 +33,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_produto'])) {
 </head>
 <body>
 
-  <?php include __DIR__ . '/../public/navbar.php'; // Inclui a barra de navegação ?>
-  <?php include_once __DIR__ . '/../config/message.php'; // Inclui o sistema de mensagens ?>
+  <?php include __DIR__ . '/../public/navbar.php';?>
 
-  <div class="container" id="gerenciamento">
-    <h1 class="mt-5">Gerenciador de Produtos</h1>
-  </div>
-
-  <div class="container mt-4">
-    <div class="row">
-      <div class="col-md-12">
+  <div class="container py-5">
+        <?php include_once __DIR__ . '/../config/message.php'; ?>
         <div class="card">
-          <div class="card-header">
-            <h4>Lista de Produtos
-              <a href="../admin/create_product.php" class="btn btn-dark float-end">Adicionar Produto</a>
-            </h4>
-          </div>
-          <div class="card-body">
-            <table class="table table-bordered table-striped">
-              <thead>
-                <tr>
-                  <th>Imagem</th>
-                  <th>Nome</th>
-                  <th>Preço</th>
-                  <th>Categoria</th>
-                  <th>Estoque</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
+            <div class="card-header">
+                <h4 class="d-flex justify-content-between align-items-center">
+                    <span>Lista de Produtos</span>
+                    <a href="create_product.php" class="btn btn-custom-primary">Adicionar Produto</a>
+                </h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width: 120px;">Imagem</th>
+                            <th style="width: 120px;">Nome do Produto</th>
+                            <th style="width: 100px;">Preço</th>
+                            <th style="width: 120px;">Categoria</th>
+                            <th style="width: 50px;">Estoque</th>
+                            <th style="width: 100px;">Ações</th>
+                        </tr>
+                    </thead>  
               <tbody>
                 <?php 
                   // Query SQL ajustada para as tabelas e colunas do seu projeto

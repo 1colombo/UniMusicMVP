@@ -80,13 +80,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['atualizar'])) {
     
     // Tipos de dados: s(string), s(string), d(double), i(integer), s(string), i(integer), i(integer)
     $stmt->bind_param("ssdisii", 
-                      $nomeProduto, 
-                      $descricaoProduto, 
-                      $precoProduto, 
-                      $estoqueProduto, 
-                      $imagem, 
-                      $idCategoria, 
-                      $idProduto);
+                    $nomeProduto, 
+                    $descricaoProduto, 
+                    $precoProduto, 
+                    $estoqueProduto, 
+                    $imagem, 
+                    $idCategoria, 
+                    $idProduto);
 
     if ($stmt->execute()) {
         $_SESSION['mensagem'] = "Produto atualizado com sucesso!";
@@ -113,75 +113,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['atualizar'])) {
 <?php include_once __DIR__ . '/../public/navbar.php'; // Inclui a navbar ?>
 
 <div class="container py-5">
-    <?php include_once __DIR__ . '/../config/message.php'; // Exibe mensagens de sucesso/erro ?>
+    <?php include_once __DIR__ . '/../config/message.php'; ?>
     
-    <h1 class="mb-4">Editar Produto: <?= htmlspecialchars($produto['nomeProduto']) ?></h1>
-    <form method="POST" enctype="multipart/form-data">
+    <div class="form-container">
+        <h1 class="mb-4 text-center">Editar Produto</h1>
+        <form method="POST" enctype="multipart/form-data">
 
-        <div class="mb-3">
-            <label for="nomeProduto" class="form-label">Nome do Produto</label>
-            <input type="text" class="form-control" id="nomeProduto" name="nomeProduto" 
-                  value="<?= htmlspecialchars($produto['nomeProduto']) ?>" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="descricaoProduto" class="form-label">Descrição</label>
-            <textarea class="form-control" id="descricaoProduto" name="descricaoProduto" rows="3" required>
-                  <?= htmlspecialchars($produto['descricaoProduto']) ?>
-            </textarea>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label for="precoProduto" class="form-label">Preço (R$)</label>
-                <input type="number" step="0.01" class="form-control" id="precoProduto" name="precoProduto" 
-                      value="<?= htmlspecialchars($produto['precoProduto']) ?>" required>
+            <div class="mb-3">
+                <label for="nomeProduto" class="form-label">Nome do Produto</label>
+                <input type="text" class="form-control" id="nomeProduto" name="nomeProduto" 
+                    value="<?= htmlspecialchars($produto['nomeProduto']) ?>" required>
             </div>
-            <div class="col-md-6 mb-3">
-                <label for="estoqueProduto" class="form-label">Estoque</label>
-                <input type="number" class="form-control" id="estoqueProduto" name="estoqueProduto" 
-                      value="<?= htmlspecialchars($produto['estoqueProduto']) ?>" min="0" required>
-            </div>
-        </div>
 
-        <div class="mb-3">
-            <label for="idCategoria" class="form-label">Categoria</label>
-            <select class="form-select" id="idCategoria" name="idCategoria" required>
-                <option value="">Selecione uma categoria</option>
-                <?php
-                if ($categorias_query) { // Reseta o ponteiro para o dropdown
-                    mysqli_data_seek($categorias_query, 0);
-                }
-                if ($categorias_query && mysqli_num_rows($categorias_query) > 0):
-                    while ($categoria = mysqli_fetch_assoc($categorias_query)): ?>
-                        <option value="<?= htmlspecialchars($categoria['idCategoria']) ?>" 
-                            <?= ($categoria['idCategoria'] == $produto['idCategoria']) ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($categoria['nome']) ?>
-                        </option>
-                    <?php endwhile;
-                else: ?>
-                    <option value="" disabled>Nenhuma categoria encontrada</option>
+            <div class="mb-3">
+                <label for="descricaoProduto" class="form-label">Descrição</label>
+                <textarea class="form-control" id="descricaoProduto" name="descricaoProduto" rows="3" required><?= htmlspecialchars($produto['descricaoProduto']) ?></textarea>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="precoProduto" class="form-label">Preço (R$)</label>
+                    <input type="number" step="0.01" class="form-control" id="precoProduto" name="precoProduto" 
+                        value="<?= htmlspecialchars($produto['precoProduto']) ?>" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="estoqueProduto" class="form-label">Estoque</label>
+                    <input type="number" class="form-control" id="estoqueProduto" name="estoqueProduto" 
+                        value="<?= htmlspecialchars($produto['estoqueProduto']) ?>" min="0" required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="idCategoria" class="form-label">Categoria</label>
+                <select class="form-select" id="idCategoria" name="idCategoria" required>
+                    <option value="">Selecione uma categoria</option>
+                    <?php
+                    if ($categorias_query) {
+                        mysqli_data_seek($categorias_query, 0);
+                    }
+                    if ($categorias_query && mysqli_num_rows($categorias_query) > 0):
+                        while ($categoria = mysqli_fetch_assoc($categorias_query)): ?>
+                            <option value="<?= htmlspecialchars($categoria['idCategoria']) ?>" 
+                                <?= ($categoria['idCategoria'] == $produto['idCategoria']) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($categoria['nome']) ?>
+                            </option>
+                        <?php endwhile;
+                    endif; ?>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="imagem" class="form-label">Trocar Imagem (opcional)</label>
+                <input type="file" class="form-control" id="imagem" name="imagem" accept="image/jpeg, image/png, image/webp">
+                <?php if ($produto['imagem']): ?>
+                    <div class="mt-2">
+                        <small class="form-text text-muted">Imagem atual:</small><br>
+                        <img src="../uploads/<?= htmlspecialchars($produto['imagem']) ?>" alt="Imagem atual do produto" style="max-width: 150px; height: auto; border-radius: 5px; margin-top: 5px;">
+                    </div>
                 <?php endif; ?>
-            </select>
-        </div>
+            </div>
 
-        <div class="mb-3">
-            <label for="imagem" class="form-label">Imagem do Produto (opcional)</label>
-            <input type="file" class="form-control" id="imagem" name="imagem" accept="image/jpeg, image/png, image/webp">
-            <?php if ($produto['imagem']): ?>
-                <small class="form-text text-muted mt-2">
-                    Imagem atual: 
-                    <img src="../images/<?= htmlspecialchars($produto['imagem']) ?>" alt="Imagem atual do produto" style="max-width: 100px; height: auto; border-radius: 5px;">
-                    (<?= htmlspecialchars($produto['imagem']) ?>)
-                </small>
-            <?php else: ?>
-                <small class="form-text text-muted mt-2">Nenhuma imagem atual.</small>
-            <?php endif; ?>
-        </div>
-
-        <button type="submit" name="atualizar" class="btn btn-primary">Salvar Alterações</button>
-        <a href="gerenciar_produtos.php" class="btn btn-secondary ms-2">Cancelar</a>
-    </form>
+            <div class="mt-4">
+                <button type="submit" name="atualizar" class="btn btn-custom-primary">Salvar Alterações</button>
+                <a href="product_management.php" class="btn btn-secondary ms-2">Cancelar</a>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

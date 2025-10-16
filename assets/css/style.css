@@ -1,0 +1,113 @@
+/* Arquivo: assets/css/admin.css (Tema UniMusic para Admin) */
+
+/* --- Configurações Gerais e Tipografia --- */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400;500;700&display=swap');
+
+body {
+    background-color: #f8f9fa; /* Um cinza bem claro para o fundo do painel */
+    font-family: 'Roboto', sans-serif;
+    color: #212529; /* Cor de texto padrão: preto/grafite */
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    color: #212529; /* Títulos em preto/grafite */
+}
+
+/* --- Estilo do Card Principal (usado em Gerenciar e Formulários) --- */
+.card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #dee2e6;
+    padding: 1rem 1.5rem;
+}
+
+.card-header h4 {
+    margin-bottom: 0;
+    font-size: 1.25rem;
+    color: #212529; /* Títulos do card em preto/grafite */
+}
+
+/* --- Tabela de Gerenciamento de Produtos --- */
+.table thead {
+    background-color: #212529; /* Cabeçalho da tabela em preto/grafite */
+    color: #ffffff;
+}
+
+.table th {
+    font-weight: 500;
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background-color: #E9ECEF; /* Cinza claro no hover da linha */
+    cursor: pointer;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.table img {
+    border-radius: 0.375rem;
+}
+
+/* --- Formulários (Criar e Editar Produto) --- */
+.form-container {
+    max-width: 800px;
+    margin: auto;
+    background-color: #ffffff;
+    padding: 2.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.form-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.form-control, .form-select {
+    border-radius: 0.375rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #E85D04; /* Laranja de destaque no foco */
+    box-shadow: 0 0 0 0.25rem rgba(232, 93, 4, 0.25);
+}
+
+/* --- Botões Personalizados (Laranja UniMusic) --- */
+.btn-custom-primary {
+    background-color: #E85D04; /* Laranja de destaque */
+    border-color: #E85D04;
+    color: #ffffff;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+}
+
+.btn-custom-primary:hover {
+    background-color: #D35400; /* Tom mais escuro do laranja para o hover */
+    border-color: #D35400;
+    color: #ffffff;
+}
+
+.btn-secondary {
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+}
+
+/* Estilo para o link "Excluir" (vermelho para ação perigosa) */
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
