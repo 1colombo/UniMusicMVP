@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_produto'])) {
                     <td><?= htmlspecialchars($produto['categoria']) ?></td>
                     <td><?= htmlspecialchars($produto['estoqueProduto']) ?></td>
                     <td>
-                      <a href="produto_edit.php?id=<?= $produto['idProduto'] ?>" class="btn btn-warning btn-sm">Editar</a>
+                      <a href="edit_product.php?id=<?= $produto['idProduto'] ?>" class="btn btn-warning btn-sm">Editar</a>
 
                       <form action="" method="POST" class="d-inline">
                         <input type="hidden" name="id" value="<?= $produto['idProduto'] ?>">
