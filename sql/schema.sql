@@ -87,7 +87,6 @@ CREATE TABLE `produto` (
   CONSTRAINT `fk_produto_categoriaproduto` FOREIGN KEY (`idCategoria`) REFERENCES `categoriaproduto` (`idCategoria`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
 --
 -- Estrutura da tabela `itemcarrinho`
 --
