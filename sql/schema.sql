@@ -78,6 +78,7 @@ CREATE TABLE `produto` (
   `descricaoProduto` text DEFAULT NULL,
   `precoProduto` decimal(10,2) NOT NULL,
   `estoqueProduto` int(11) NOT NULL DEFAULT 0,
+  `imagemUrl` varchar(255) DEFAULT NULL,
   `idCategoria` int(11) NOT NULL,
   PRIMARY KEY (`idProduto`),
   KEY `fk_produto_categoriaproduto` (`idCategoria`),
@@ -85,6 +86,7 @@ CREATE TABLE `produto` (
   KEY `idx_produto_nome` (`nomeProduto`),
   CONSTRAINT `fk_produto_categoriaproduto` FOREIGN KEY (`idCategoria`) REFERENCES `categoriaproduto` (`idCategoria`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 
 --
 -- Estrutura da tabela `itemcarrinho`
