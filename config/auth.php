@@ -1,4 +1,4 @@
-<?php 
+<?php
 function isAdmin() {
     return isset($_SESSION['tipo']) && $_SESSION['tipo'] === 'Admin';
 }

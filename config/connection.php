@@ -9,7 +9,7 @@ function connectBanco() {
 
   if (!$conexao) {
       die("Connection failed: " . mysqli_connect_error());
-  }  
+  } 
   return $conexao;
 }
 ?>

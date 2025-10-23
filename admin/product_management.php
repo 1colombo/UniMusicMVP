@@ -56,9 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_produto'])) {
                             <th style="width: 50px;">Estoque</th>
                             <th style="width: 50px;">Ações</th>
                         </tr>
-                    </thead>  
+                    </thead>
               <tbody>
-                <?php 
+                <?php
                   // Query SQL ajustada para as tabelas e colunas do seu projeto
                   $sql = "SELECT p.idProduto, p.nomeProduto, p.precoProduto, p.estoqueProduto, p.imagem, c.nome AS categoria
                           FROM produto AS p
