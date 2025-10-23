@@ -2,7 +2,7 @@
 
 include_once __DIR__ . '/../config/init.php';
 
-$connect = connectBanco(); 
+$connect = connectBanco();
 
 
 // 1. Busca APENAS as categorias, removendo raridades e universos

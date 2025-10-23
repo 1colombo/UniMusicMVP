@@ -1,6 +1,6 @@
 <?php
 include_once __DIR__ . '/../config/init.php';
-$conexao = connectBanco();
+$connect = connectBanco();
 
 // Inicializa variáveis para evitar notices quando a página for carregada pela primeira vez
 $nome = $email = $telefone = $cpf = $senha = $confirmar_senha = '';
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['mensagem'] = 'As senhas não coincidem. Tente novamente.';
     } else {
         // Verifica se e-mail, CPF ou telefone já existem
-        $stmt_check = $conexao->prepare("SELECT idUsuario FROM usuario WHERE emailUsuario = ? OR CPFUsuario = ? OR telefoneUsuario = ?");
+        $stmt_check = $connect->prepare("SELECT idUsuario FROM usuario WHERE emailUsuario = ? OR CPFUsuario = ? OR telefoneUsuario = ?");
         $stmt_check->bind_param("sss", $email, $cpf, $telefone);
         $stmt_check->execute();
         $result_check = $stmt_check->get_result();
@@ -47,15 +47,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
 
             // Inicia uma transação para garantir que usuário E endereço sejam salvos ou nada seja salvo
-            $conexao->begin_transaction();
+            $connect->begin_transaction();
 
             try {
                 // 1. Insere o novo usuário na tabela 'usuario'
-                $stmt_usuario = $conexao->prepare("INSERT INTO usuario (nomeUsuario, emailUsuario, senhaHash, telefoneUsuario, CPFUsuario) VALUES (?, ?, ?, ?, ?)");
+                $stmt_usuario = $connect->prepare("INSERT INTO usuario (nomeUsuario, emailUsuario, senhaHash, telefoneUsuario, CPFUsuario) VALUES (?, ?, ?, ?, ?)");
                 $stmt_usuario->bind_param("sssss", $nome, $email, $senhaHash, $telefone, $cpf);
                 $stmt_usuario->execute();
 
-                $idNovoUsuario = $conexao->insert_id; // Pega o ID do usuário recém-inserido
+                $idNovoUsuario = $connect->insert_id; // Pega o ID do usuário recém-inserido
 
                 if (!$idNovoUsuario) {
                     throw new Exception("Erro ao obter o ID do novo usuário.");
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // 2. Insere o endereço na tabela 'endereco'
                 // Atenção: nomes de colunas conforme o schema: cep, rua, numero, complemento, bairro, cidade, uf, idUsuario
-                $stmt_endereco = $conexao->prepare("INSERT INTO endereco (cep, rua, numero, complemento, bairro, cidade, uf, idUsuario) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt_endereco = $connect->prepare("INSERT INTO endereco (cep, rua, numero, complemento, bairro, cidade, uf, idUsuario) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
                 $stmt_endereco->bind_param("sssssssi", $cep, $logradouro, $numero, $complemento, $bairro, $cidade, $estado, $idNovoUsuario);
                 $stmt_endereco->execute();
 
@@ -74,16 +74,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt_endereco->close();
 
                 // Se tudo deu certo, commita a transação
-                $conexao->commit();
+                $connect->commit();
                 $_SESSION['mensagem'] = 'Cadastro realizado com sucesso! Faça o login para continuar.';
                 header('Location: login.php');
                 exit();
 
             } catch (Exception $e) {
                 // Se algo deu errado, reverte todas as operações
-                $conexao->rollback();
+                $connect->rollback();
                 $_SESSION['mensagem'] = 'Erro ao realizar o cadastro (usuário ou endereço). Tente novamente.';
-                error_log("Erro no cadastro (transação revertida): " . $e->getMessage() . " / SQL error: " . $conexao->error);
+                error_log("Erro no cadastro (transação revertida): " . $e->getMessage() . " / SQL error: " . $connect->error);
             }
         }
         $stmt_check->close();

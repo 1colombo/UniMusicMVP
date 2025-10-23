@@ -1,12 +1,8 @@
 <?php
-// (Este bloco de código assume que o 'init.php' já foi incluído na página principal antes desta navbar)
-
-// Se a variável de conexão não existir, tenta conectar (medida de segurança)
 if (!isset($connect) || !$connect) {
     $connect = connectBanco();
 }
 
-// Consulta as categorias de produto para o menu dropdown
 $categorias_query = false; // Inicializa como false
 if ($connect) {
     $categorias_sql = "SELECT idCategoria, nome FROM categoriaproduto ORDER BY nome ASC";

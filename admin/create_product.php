@@ -1,21 +1,14 @@
 <?php
-// Arquivo: admin/produto_create.php
-
-// Inclui o arquivo de configuração que inicia a sessão, funções e conexão
 include_once __DIR__ . '/../config/init.php';
 
-// Conecta ao banco de dados
 $connect = connectBanco();
 
-// Busca as categorias para popular o dropdown do formulário
-// Usando a tabela correta 'categoriaproduto'
 $categorias_query = false;
 if ($connect) {
     $categorias_sql = "SELECT * FROM categoriaproduto ORDER BY nome ASC";
     $categorias_query = mysqli_query($connect, $categorias_sql);
 }
 
-// --- LÓGICA PARA PROCESSAR O CADASTRO DO PRODUTO ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nomeProduto        = trim($_POST['nomeProduto']);
     $descricaoProduto   = trim($_POST['descricaoProduto']);
