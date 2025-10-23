@@ -30,6 +30,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cidade = trim($_POST['cidade']);
     $estado = trim($_POST['estado']);
 
+    // Se alguns campos de endereço estiverem vazios, tenta preencher via API ViaCEP (server-side)
+    $cep_digits = preg_replace('/\D/', '', $cep);
+    if (strlen($cep_digits) === 8 && (empty($logradouro) || empty($bairro) || empty($cidade) || empty($estado))) {
+        // Usa file_get_contents com timeout reduzido; em ambientes restritos pode ser necessário usar cURL
+        $context = stream_context_create([
+            'http' => [
+                'timeout' => 5
+            ]
+        ]);
+        $url = 'https://viacep.com.br/ws/' . $cep_digits . '/json/';
+        $viacep_raw = @file_get_contents($url, false, $context);
+        if ($viacep_raw !== false) {
+            $viacep_data = json_decode($viacep_raw, true);
+            if (is_array($viacep_data) && empty($viacep_data['erro'])) {
+                // Preenche somente quando não estiverem definidos para não sobrescrever inputs do usuário
+                if (empty($logradouro) && !empty($viacep_data['logradouro'])) {
+                    $logradouro = $viacep_data['logradouro'];
+                }
+                if (empty($bairro) && !empty($viacep_data['bairro'])) {
+                    $bairro = $viacep_data['bairro'];
+                }
+                if (empty($cidade) && !empty($viacep_data['localidade'])) {
+                    $cidade = $viacep_data['localidade'];
+                }
+                if (empty($estado) && !empty($viacep_data['uf'])) {
+                    $estado = $viacep_data['uf'];
+                }
+            }
+        }
+    }
+
     // --- Validações ---
     if ($senha !== $confirmar_senha) {
         $_SESSION['mensagem'] = 'As senhas não coincidem. Tente novamente.';
@@ -185,5 +216,96 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const cepInput = document.getElementById('cep');
+    if (!cepInput) return;
+
+    let debounceTimer = null;
+
+    const setAddressFields = (data) => {
+        // Preenche apenas se o campo estiver vazio, para não sobrescrever a entrada do usuário
+        const logradouroEl = document.getElementById('logradouro');
+        const bairroEl = document.getElementById('bairro');
+        const cidadeEl = document.getElementById('cidade');
+        const estadoEl = document.getElementById('estado');
+
+        if (logradouroEl && (!logradouroEl.value || logradouroEl.value === '...') && data.logradouro) logradouroEl.value = data.logradouro;
+        if (bairroEl && (!bairroEl.value || bairroEl.value === '...') && data.bairro) bairroEl.value = data.bairro;
+        if (cidadeEl && (!cidadeEl.value || cidadeEl.value === '...') && data.localidade) cidadeEl.value = data.localidade;
+        if (estadoEl && (!estadoEl.value || estadoEl.value === '...') && data.uf) estadoEl.value = data.uf;
+    };
+
+    const clearAddressPlaceholders = () => {
+        const logradouroEl = document.getElementById('logradouro');
+        const bairroEl = document.getElementById('bairro');
+        const cidadeEl = document.getElementById('cidade');
+        const estadoEl = document.getElementById('estado');
+        if (logradouroEl && logradouroEl.value === '...') logradouroEl.value = '';
+        if (bairroEl && bairroEl.value === '...') bairroEl.value = '';
+        if (cidadeEl && cidadeEl.value === '...') cidadeEl.value = '';
+        if (estadoEl && estadoEl.value === '...') estadoEl.value = '';
+    };
+
+    const fetchByCep = (cepDigits) => {
+        // coloca placeholders enquanto busca
+        const logradouroEl = document.getElementById('logradouro');
+        const bairroEl = document.getElementById('bairro');
+        const cidadeEl = document.getElementById('cidade');
+        const estadoEl = document.getElementById('estado');
+        if (logradouroEl && !logradouroEl.value) logradouroEl.value = '...';
+        if (bairroEl && !bairroEl.value) bairroEl.value = '...';
+        if (cidadeEl && !cidadeEl.value) cidadeEl.value = '...';
+        if (estadoEl && !estadoEl.value) estadoEl.value = '...';
+
+        fetch('https://viacep.com.br/ws/' + cepDigits + '/json/')
+            .then(function(response) {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.erro) {
+                    // CEP não encontrado
+                    clearAddressPlaceholders();
+                    return;
+                }
+                setAddressFields(data);
+            })
+            .catch(function(err) {
+                console.error('Erro ao consultar ViaCEP:', err);
+                clearAddressPlaceholders();
+            });
+    };
+
+    cepInput.addEventListener('input', function() {
+        // normaliza para dígitos
+        const onlyDigits = cepInput.value.replace(/\D/g, '');
+
+        // se houver debounce anterior, limpa
+        if (debounceTimer) clearTimeout(debounceTimer);
+
+        // só consulta quando houver 8 dígitos
+        if (onlyDigits.length === 8) {
+            // pequena espera para o usuário terminar a digitação/paste
+            debounceTimer = setTimeout(function() {
+                fetchByCep(onlyDigits);
+            }, 400);
+        } else {
+            // se o CEP for reduzido para menos de 8, limpa placeholders
+            if (onlyDigits.length < 8) {
+                clearAddressPlaceholders();
+            }
+        }
+    });
+
+    // Também tenta quando o campo perde o foco se o usuário colou e não houve input evento
+    cepInput.addEventListener('blur', function() {
+        const onlyDigits = cepInput.value.replace(/\D/g, '');
+        if (onlyDigits.length === 8) {
+            fetchByCep(onlyDigits);
+        }
+    });
+});
+</script>
 </body>
 </html>
