@@ -13,6 +13,9 @@ if ($connect) {
 }
 
 ?>
+<head>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand fw-bold" href="../index.php">UniMusic</a>
@@ -60,7 +63,7 @@ if ($connect) {
             <div class="mx-auto">
                 <form class="d-flex" action="../public/index.php" method="GET" role="search">
                     <input class="form-control me-2" type="search" placeholder="Buscar produtos..." aria-label="Search" name="busca" value="<?= htmlspecialchars($_GET['busca'] ?? '') ?>" style="width: 300px;">
-                    <button class="btn btn-outline-light" type="submit">Buscar</button>
+                    <button class="btn btn-outline-light btn-buscar" type="submit">Buscar</button>
                 </form>
             </div>
         </div>
