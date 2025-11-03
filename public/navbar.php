@@ -18,7 +18,7 @@ if ($connect) {
 </head>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="../index.php">UniMusic</a>
+        <a class="navbar-brand fw-bold" href="./index.php"><img src="./images/branco.png" class="navbar-brand"></a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -58,13 +58,29 @@ if ($connect) {
                     </ul>
                 </li>
                 <?php endif; ?>
-            </ul>
+            </ul>   
 
-            <div class="mx-auto">
-                <form class="d-flex" action="../public/index.php" method="GET" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Buscar produtos..." aria-label="Search" name="busca" value="<?= htmlspecialchars($_GET['busca'] ?? '') ?>" style="width: 300px;">
-                    <button class="btn btn-outline-light btn-buscar" type="submit">Buscar</button>
-                </form>
+            <div class="navbar-right">
+
+                <div class="mx-auto navbar-right-item">
+                    <form class="d-flex" action="../public/index.php" method="GET" role="search">
+                        <input class="form-control me-2" type="search" placeholder="Buscar produtos..." aria-label="Search" name="busca" value="<?= htmlspecialchars($_GET['busca'] ?? '') ?>" style="width: 300px;">
+                        <button class="btn btn-outline-light btn-buscar" type="submit">Buscar</button>
+                    </form>
+                </div>
+                    
+                    <div class="dropdown btn-usuario navbar-right-item">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Usuário
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="./users/create_account.php">Criar conta</a></li>
+                            <li><a class="dropdown-item" href="./users/login.php">Login</a></li>
+                        </ul>
+                    </div>
+
+
+                    
             </div>
         </div>
     </div>

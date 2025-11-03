@@ -139,3 +139,17 @@ h1, h2, h3, h4, h5, h6 {
     display:flex;
     margin-top: -40px;
 }
+.navbar-brand{
+    width: 140px;
+}
+
+.navbar-right{
+    display: flex;
+}
+.navbar-right-item{
+    margin-right: 25px;
+    border-right: 20px
+}
+.btn-usuario{
+    margin-left: 20px
+}
