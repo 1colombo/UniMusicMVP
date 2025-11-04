@@ -112,6 +112,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['atualizar'])) {
 <body>
 <?php include_once __DIR__ . '/../public/navbar.php'; // Inclui a navbar ?>
 
+<?php if (!isAdmin()): ?>
+    <div class="container py-5">
+        <div class="alert alert-danger" role="alert">
+            Acesso negado. Você não tem permissão para acessar esta página.
+        </div>
+    </div>
+    <?php exit(); 
+    else: ?>
 <div class="container py-5">
     <?php include_once __DIR__ . '/../config/message.php'; ?>
     
@@ -180,7 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['atualizar'])) {
         </form>
     </div>
 </div>
-
+    <?php endif; ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

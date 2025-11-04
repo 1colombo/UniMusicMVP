@@ -36,6 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_produto'])) {
 
   <?php include __DIR__ . '/../public/navbar.php';?>
 
+  <?php if (!isAdmin()): ?>
+      <div class="container py-5">
+          <div class="alert alert-danger" role="alert">
+              Acesso negado. Você não tem permissão para acessar esta página.
+          </div>
+      </div>
+      <?php exit(); 
+      else: ?>
   <div class="container py-5">
         <?php include_once __DIR__ . '/../config/message.php'; ?>
         <div class="card">
@@ -100,6 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_produto'])) {
         </div>
       </div>
     </div>
+  <?php endif; ?>
   </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

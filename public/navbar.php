@@ -72,11 +72,17 @@ if ($connect) {
                     
                     <div class="dropdown btn-usuario navbar-right-item">
                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Usuário
+                            Minha Conta
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/users/create_account.php">Criar conta</a></li>
-                            <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/users/login.php">Login</a></li>
+                            <?php if (isLoggedIn()): ?>
+                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/users/profile.php">Perfil</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/users/logout.php">Sair</a></li>
+                            <?php else: ?>
+                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/users/login.php">Entrar</a></li>
+                                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/users/create_account.php">Criar conta</a></li>
+                            <?php endif; ?>
                         </ul>
                     </div>
                     
