@@ -63,6 +63,7 @@ CREATE TABLE `endereco` (
   `cidade` varchar(100) NOT NULL,
   `uf` varchar(2) NOT NULL,
   `cep` varchar(9) NOT NULL,
+  'ibge' varchar(12) DEFAULT NULL,
   PRIMARY KEY (`idEndereco`),
   UNIQUE KEY `idUsuario` (`idUsuario`),
   CONSTRAINT `endereco_ibfk_1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`) ON DELETE CASCADE
