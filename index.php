@@ -1,6 +1,5 @@
 <?php
 include_once __DIR__ . '/config/init.php';
-include __DIR__ . '/public/navbar.php';
 
 $connect = connectBanco();
 
@@ -9,7 +8,6 @@ $produtos = mysqli_query($connect, "
   FROM produto
   JOIN categoriaproduto ON produto.idCategoria = categoriaproduto.idCategoria
 ");
-
 $stmt = $connect->prepare("SELECT produto.idProduto, produto.nomeProduto, produto.descricaoProduto, produto.precoProduto, produto.imagem, categoriaproduto.nome AS categoria
   FROM produto
   JOIN categoriaproduto ON produto.idCategoria = categoriaproduto.idCategoria");
@@ -28,10 +26,16 @@ $produtos = $result->fetch_all(MYSQLI_ASSOC);
     <title>UniMusic</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="shortcut icon" href="<?php echo BASE_URL; ?>/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css">
 </head>
 <body>
     
-<!--CARROSSEL-->
+<?php 
+
+include __DIR__ . '/public/navbar.php'; 
+?>
+    
 <div id="carouselExampleIndicators" class="carousel slide">
   <div class="carousel-indicators">
     <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -63,17 +67,17 @@ $produtos = $result->fetch_all(MYSQLI_ASSOC);
 <div class="page-body">
     <h1 class="text-center">Produtos mais relevantes</h1>
 
-
-<!--CARDS-->
-<?php foreach ($produtos as $produto): ?>
-            <div class="col-md-4" id="card-body">
+    <div class="row g-4">
+        <?php foreach ($produtos as $produto): ?>
+            <div class="col-md-4">
               <div class="card h-100">
-                <img src="  images/<?= htmlspecialchars($produto['imagem'])?>" class="card-img-top" alt="<?= htmlspecialchars($produto['nomeProduto']) ?>">
+                <img src="<?php echo BASE_URL; ?>/images/<?= htmlspecialchars($produto['imagem'])?>" class="card-img-top" alt="<?= htmlspecialchars($produto['nomeProduto']) ?>">
                 <div class="card-body">
                   <h5 class="card-title"><?= htmlspecialchars($produto['nomeProduto']) ?></h5>
                   <p class="card-text">R$ <?= number_format($produto['precoProduto'], 2, ',', '.') ?></p>
                   <p class="card-text"><small><?= $produto['categoria'] ?></small></p>
-                  <form method="POST" action="adicionar_carrinho.php">
+                  
+                  <form method="POST" action="<?php echo BASE_URL; ?>/adicionar_carrinho.php">
                     <input type="hidden" name="id" value="<?= $produto['idProduto'] ?>">
                     <input type="hidden" name="nome" value="<?= $produto['nomeProduto'] ?>">
                     <input type="hidden" name="preco" value="<?= $produto['precoProduto'] ?>">
@@ -85,19 +89,13 @@ $produtos = $result->fetch_all(MYSQLI_ASSOC);
               </div>
             </div>
           <?php endforeach; ?>
-</div>
+    </div> </div>
 
-<!-- Footer -->
 <footer class="text-center text-lg-start bg-body-tertiary text-muted">
-  <!-- Section: Social media -->
   <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
-    <!-- Left -->
     <div class="me-5 d-none d-lg-block">
       <span>Siga nossas redes sociais:</span>
     </div>
-    <!-- Left -->
-
-    <!-- Right -->
     <div>
       <a href="" class="me-4 text-reset">
         <i class="fab fa-facebook-f"></i>
@@ -118,31 +116,20 @@ $produtos = $result->fetch_all(MYSQLI_ASSOC);
         <i class="fab fa-github"></i>
       </a>
     </div>
-    <!-- Right -->
-  </section>
-  <!-- Section: Social media -->
-
-  <!-- Section: Links  -->
+    </section>
   <section class="">
     <div class="container text-center text-md-start mt-5">
-      <!-- Grid row -->
       <div class="row mt-3">
-        <!-- Grid column -->
         <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
-          <!-- Content -->
           <h6 class="text-uppercase fw-bold mb-4">
-            <img class="logo-footer"src="./assets/images/UniCode-logo-transparente.png" style="width:220px">
+            <img class="logo-footer"src="<?php echo BASE_URL; ?>/assets/images/UniCode-logo-transparente.png" style="width:220px">
           </h6>
           <p>
             Lorem ipsum
             dolor sit amet, consectetur adipisicing elit.
           </p>
         </div>
-        <!-- Grid column -->
-
-        <!-- Grid column -->
         <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
-          <!-- Links -->
           <h6 class="text-uppercase fw-bold mb-4">
             Products
           </h6>
@@ -159,11 +146,7 @@ $produtos = $result->fetch_all(MYSQLI_ASSOC);
             <a href="#!" class="text-reset">Laravel</a>
           </p>
         </div>
-        <!-- Grid column -->
-
-        <!-- Grid column -->
         <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
-          <!-- Links -->
           <h6 class="text-uppercase fw-bold mb-4">
             Useful links
           </h6>
@@ -180,11 +163,7 @@ $produtos = $result->fetch_all(MYSQLI_ASSOC);
             <a href="#!" class="text-reset">Help</a>
           </p>
         </div>
-        <!-- Grid column -->
-
-        <!-- Grid column -->
         <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
-          <!-- Links -->
           <h6 class="text-uppercase fw-bold mb-4">Contato</h6>
           <p><i class="fas fa-home me-3"></i>Campinas, SP</p>
           <p>
