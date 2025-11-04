@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h1 class="mb-4 text-center">Acesse sua Conta</h1>
         <?php include_once __DIR__ . '/../config/message.php';?>
 
-        <form action="login.php" method="POST">
+        <form action="<?php echo BASE_URL; ?>/users/login.php" method="POST">
             <div class="mb-3">
                 <label for="emailUsuario" class="form-label">E-mail</label>
                 <input type="email" class="form-control" id="emailUsuario" name="emailUsuario" required>

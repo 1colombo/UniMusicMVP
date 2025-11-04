@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h1 class="mb-4 text-center">Crie sua Conta</h1>
         <?php include_once __DIR__ . '/../config/message.php'; ?>
 
-    <form action="create_account.php" method="POST">
+    <form action="<?php echo BASE_URL; ?>/users/create_account.php" method="POST">
             <h4 class="mb-3 text-center">Informações Pessoais</h4>
             <div class="mb-3">
                 <label for="nomeUsuario" class="form-label">Nome Completo</label>
