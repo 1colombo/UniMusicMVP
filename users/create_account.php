@@ -4,7 +4,7 @@ $connect = connectBanco();
 
 // Inicializa variáveis para evitar notices quando a página for carregada pela primeira vez
 $nome = $email = $telefone = $cpf = $senha = $confirmar_senha = '';
-$cep = $logradouro = $numero = $complemento = $bairro = $cidade = $estado = '';
+$cep = $logradouro = $numero = $complemento = $bairro = $cidade = $estado = $ibge = '';
 
 // Se o usuário já estiver logado, redireciona para a home
 if (isLoggedIn()) {
@@ -29,10 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bairro = trim($_POST['bairro']);
     $cidade = trim($_POST['cidade']);
     $estado = trim($_POST['estado']);
+    $ibge = trim($_POST['ibge']); 
 
     // Se alguns campos de endereço estiverem vazios, tenta preencher via API ViaCEP (server-side)
     $cep_digits = preg_replace('/\D/', '', $cep);
-    if (strlen($cep_digits) === 8 && (empty($logradouro) || empty($bairro) || empty($cidade) || empty($estado))) {
+    if (strlen($cep_digits) === 8 && (empty($logradouro) || empty($bairro) || empty($cidade) || empty($estado) || empty($ibge))) {
         // Usa file_get_contents com timeout reduzido; em ambientes restritos pode ser necessário usar cURL
         $context = stream_context_create([
             'http' => [
@@ -56,6 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 if (empty($estado) && !empty($viacep_data['uf'])) {
                     $estado = $viacep_data['uf'];
+                }
+                if (empty($ibge) && !empty($viacep_data['ibge'])) {
+                    $ibge = $viacep_data['ibge'];
                 }
             }
         }
@@ -97,8 +101,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // 2. Insere o endereço na tabela 'endereco'
                 // Atenção: nomes de colunas conforme o schema: cep, rua, numero, complemento, bairro, cidade, uf, idUsuario
-                $stmt_endereco = $connect->prepare("INSERT INTO endereco (cep, rua, numero, complemento, bairro, cidade, uf, idUsuario) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt_endereco->bind_param("sssssssi", $cep, $logradouro, $numero, $complemento, $bairro, $cidade, $estado, $idNovoUsuario);
+                $stmt_endereco = $connect->prepare("INSERT INTO endereco (cep, rua, numero, complemento, bairro, cidade, uf, idUsuario, ibge) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt_endereco->bind_param("sssssssis", $cep, $logradouro, $numero, $complemento, $bairro, $cidade, $estado, $idNovoUsuario, $ibge);
                 $stmt_endereco->execute();
 
                 // Fecha o statement do endereco
