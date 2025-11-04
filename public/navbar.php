@@ -28,7 +28,7 @@ if ($connect) {
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-                <li class="nav-item dropdown">
+                <!-- <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="categoriasDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Categorias
                     </a>
@@ -46,9 +46,9 @@ if ($connect) {
                             <li><a class="dropdown-item" href="#">Nenhuma categoria encontrada</a></li>
                         <?php endif; ?>
                     </ul>
-                </li>
+                </li> -->
 
-                <?php if(isAdmin()): ?>
+            <?php if(isAdmin()): ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Administração
@@ -58,7 +58,7 @@ if ($connect) {
                         <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/admin/product_management.php">Gerenciar Produtos</a></li>
                     </ul>
                 </li>
-                <?php endif; ?>
+            <?php endif; ?>
             </ul>   
 
             <div class="navbar-right">

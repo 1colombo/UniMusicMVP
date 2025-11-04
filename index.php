@@ -2,6 +2,22 @@
 include_once __DIR__ . '/config/init.php';
 include __DIR__ . '/public/navbar.php';
 
+$connect = connectBanco();
+
+$produtos = mysqli_query($connect, "
+  SELECT produto.idProduto, produto.nomeProduto, produto.descricaoProduto, produto.precoProduto, produto.imagem, categoriaproduto.nome AS categoria
+  FROM produto
+  JOIN categoriaproduto ON produto.idCategoria = categoriaproduto.idCategoria
+");
+
+$stmt = $connect->prepare("SELECT produto.idProduto, produto.nomeProduto, produto.descricaoProduto, produto.precoProduto, produto.imagem, categoriaproduto.nome AS categoria
+  FROM produto
+  JOIN categoriaproduto ON produto.idCategoria = categoriaproduto.idCategoria");
+
+$stmt->execute();
+$result = $stmt->get_result();
+$produtos = $result->fetch_all(MYSQLI_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
@@ -49,19 +65,26 @@ include __DIR__ . '/public/navbar.php';
 
 
 <!--CARDS-->
-<div class="card" style="width: 18rem;">
-  <img src="" class="card-img-top" alt="...">
-  
-  <div class="card-body">
-    <h5 class="card-title">Ukulele</h5>
-    <h3 class="preco">R$10.000,00</h3>
-  </div>
-
-  <div class="card-body card-button">
-    <button class="btn btn-warning btn-card" type="submit">Adicionar ao Carrinho</button>
-  </div>
-
-</div>
+<?php foreach ($produtos as $produto): ?>
+            <div class="col-md-4" id="card-body">
+              <div class="card h-100">
+                <img src="  images/<?= htmlspecialchars($produto['imagem'])?>" class="card-img-top" alt="<?= htmlspecialchars($produto['nomeProduto']) ?>">
+                <div class="card-body">
+                  <h5 class="card-title"><?= htmlspecialchars($produto['nomeProduto']) ?></h5>
+                  <p class="card-text">R$ <?= number_format($produto['precoProduto'], 2, ',', '.') ?></p>
+                  <p class="card-text"><small><?= $produto['categoria'] ?></small></p>
+                  <form method="POST" action="adicionar_carrinho.php">
+                    <input type="hidden" name="id" value="<?= $produto['idProduto'] ?>">
+                    <input type="hidden" name="nome" value="<?= $produto['nomeProduto'] ?>">
+                    <input type="hidden" name="preco" value="<?= $produto['precoProduto'] ?>">
+                    <?php if(isLoggedIn()): ?>
+                      <button type="submit" class="btn btn-sm btn-success mt-2">Adicionar ao carrinho</button>
+                    <?php endif?>
+                  </form>
+                </div>
+              </div>
+            </div>
+          <?php endforeach; ?>
 </div>
 
 <!-- Footer -->
