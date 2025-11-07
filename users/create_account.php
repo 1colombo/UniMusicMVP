@@ -336,5 +336,40 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<script src="https://unpkg.com/imask"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Máscara para Telefone
+    var phoneInput = document.getElementById('telefoneUsuario');
+    if(phoneInput) {
+        IMask(phoneInput, {
+            mask: [
+                { mask: '(00) 0000-0000' },  // Fixo
+                { mask: '(00) 00000-0000' } // Celular
+            ]
+        });
+    }
+
+    // Máscara para CPF
+    var cpfInput = document.getElementById('CPFUsuario');
+    if(cpfInput) {
+        IMask(cpfInput, {
+            mask: '000.000.000-00'
+        });
+    }
+
+    // Máscara para CEP
+    var cepInput = document.getElementById('cep');
+    if(cepInput) {
+        IMask(cepInput, {
+            mask: '00000-000'
+        });
+    }
+
+});
+</script>
 </body>
 </html>
