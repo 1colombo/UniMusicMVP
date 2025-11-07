@@ -13,6 +13,15 @@ if ($connect) {
     }
 }
 
+$totalItensCarrinho = 0;
+$subtotalCarrinho = 0.00;
+if (isset($_SESSION['carrinho']) && !empty($_SESSION['carrinho'])) {
+    foreach ($_SESSION['carrinho'] as $item) {
+        $totalItensCarrinho += $item['quantidade'];
+        $subtotalCarrinho += $item['preco'] * $item['quantidade'];
+    }
+}
+
 ?>
 <head>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css">
@@ -85,8 +94,63 @@ if ($connect) {
                             <?php endif; ?>
                         </ul>
                     </div>
+
+                    <?php if (isLoggedIn()): // Mostra o carrinho apenas para clientes logados ?>
+                    <div classs="navbar-right-item">
+                        <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#carrinhoOffcanvas" aria-controls="carrinhoOffcanvas">
+                            <i class="bi bi-cart-fill"></i> <?php if ($totalItensCarrinho > 0): ?>
+                                <span class="badge bg-danger rounded-pill"><?= $totalItensCarrinho ?></span>
+                            <?php endif; ?>
+                        </button>
+                    </div>
+                <?php endif; ?>
                     
             </div>
         </div>
     </div>
 </nav>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="carrinhoOffcanvas" aria-labelledby="carrinhoOffcanvasLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="carrinhoOffcanvasLabel">Meu Carrinho</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <?php if ($totalItensCarrinho > 0): ?>
+            
+            <div class="mb-3">
+                <?php foreach ($_SESSION['carrinho'] as $item): ?>
+                    <div class="card mb-2 carrinho-item">
+                        <div class="card-body">
+                            <h6 class="card-title"><?= htmlspecialchars($item['nome']) ?></h6>
+                            <p class="card-text mb-1">
+                                Qtd: <?= $item['quantidade'] ?>
+                            </p>
+                            <p class="card-text fw-bold">
+                                R$ <?= number_format($item['preco'] * $item['quantidade'], 2, ',', '.') ?>
+                            </p>
+                            </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+
+            <hr>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="fs-5">Subtotal:</span>
+                <span class="fs-5 fw-bold">R$ <?= number_format($subtotalCarrinho, 2, ',', '.') ?></span>
+            </div>
+
+            <div class="d-grid gap-2">
+                <a href="<?php echo BASE_URL; ?>/checkout.php" class="btn btn-custom-primary">Finalizar Compra</a>
+                <a href="<?php echo BASE_URL; ?>/limpar_carrinho.php" class="btn btn-outline-danger">Limpar Carrinho</a>
+            </div>
+
+        <?php else: ?>
+            <div class="text-center mt-5">
+                <i class="bi bi-cart-x" style="font-size: 4rem; color: #6c757d;"></i>
+                <p class="mt-3">Seu carrinho está vazio.</p>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>

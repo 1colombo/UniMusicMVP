@@ -28,12 +28,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['tipo'] = $usuario['tipo'];
             $_SESSION['logado'] = true;
 
+            // --- INÍCIO DA INTEGRAÇÃO DO CARRINHO ---
+            $idUsuario = $usuario['idUsuario'];
+
+            // 1. Encontrar ou Criar o Carrinho no DB
+            // A tabela 'carrinho' tem uma restrição UNIQUE no idUsuario
+            $stmt_cart = $connect->prepare("SELECT id FROM carrinho WHERE idUsuario = ?");
+            $stmt_cart->bind_param("i", $idUsuario);
+            $stmt_cart->execute();
+            $result_cart = $stmt_cart->get_result();
+
+            if ($result_cart->num_rows === 1) {
+                $carrinho = $result_cart->fetch_assoc();
+                $idCarrinho = $carrinho['id'];
+            } else {
+                // Criar um novo carrinho para o usuário
+                $stmt_create_cart = $connect->prepare("INSERT INTO carrinho (idUsuario) VALUES (?)");
+                $stmt_create_cart->bind_param("i", $idUsuario);
+                $stmt_create_cart->execute();
+                $idCarrinho = $connect->insert_id;
+                $stmt_create_cart->close();
+            }
+            $stmt_cart->close();
+
+            // 2. Salvar o ID do carrinho na sessão para uso futuro
+            $_SESSION['idCarrinho'] = $idCarrinho;
+
+            // 3. Carregar o carrinho do DB para a sessão
+            $_SESSION['carrinho'] = []; // Limpa qualquer carrinho anterior
+            
+            $stmt_items = $connect->prepare("
+                SELECT i.idProduto, i.quantidade, i.preco_unitario, p.nomeProduto 
+                FROM itemcarrinho AS i
+                JOIN produto AS p ON i.idProduto = p.idProduto
+                WHERE i.idCarrinho = ?
+            ");
+            $stmt_items->bind_param("i", $idCarrinho);
+            $stmt_items->execute();
+            $result_items = $stmt_items->get_result();
+
+            while ($item = $result_items->fetch_assoc()) {
+                $_SESSION['carrinho'][$item['idProduto']] = [
+                    'id' => $item['idProduto'],
+                    'nome' => $item['nomeProduto'],
+                    'preco' => $item['preco_unitario'], // Preço salvo no DB
+                    'quantidade' => $item['quantidade']
+                ];
+            }
+            $stmt_items->close();
+
             header('Location: ../index.php');
             exit();
         }
     }
 
-    $_SESSION['mensagem'] = 'E-mail ou senha inválidos.';
+    $_SESSION['notificacao'] = [
+        'tipo' => 'danger',
+        'mensagem' => 'E-mail ou senha inválidos.'
+    ];
 }
 ?>
 
@@ -48,10 +100,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 <?php include_once __DIR__ . '/../public/navbar.php'; ?>
 
+<div class="notificacao-container">
+    <?php include_once __DIR__ . '/config/message.php'; ?>
+</div>
+
 <div class="container py-5">
     <div class="form-container" style="max-width: 500px;">
         <h1 class="mb-4 text-center">Acesse sua Conta</h1>
-        <?php include_once __DIR__ . '/../config/message.php';?>
 
         <form action="<?php echo BASE_URL; ?>/users/login.php" method="POST">
             <div class="mb-3">
