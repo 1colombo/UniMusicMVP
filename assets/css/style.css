@@ -153,6 +153,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .navbar-right{
     display: flex;
+    align-items: center;
 }
 .navbar-right-item{
     margin-right: 25px;
@@ -190,6 +191,62 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Sombra suave */
     margin-bottom: 0.5rem;
 }
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+
+.account-icon{
+    font-size: 40px;
+}
+.btn-cart{
+    background-color: transparent;
+    font-size: 30px;
+    padding: 4px 8px;
+    border: none;
+
+}
+.btn-account{
+    background-color: transparent;
+    padding: 5px;
+    border: none;
+    margin-top: 8px;
+}
+.number-cart{
+    font-size: 15px;
+}
+
+/* --- Barra de Categorias Secundária --- */
+#category-bar {
+    /* Deixa a barra mais fina que a principal */
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
+    
+    /* Adiciona uma sombra sutil para destacar */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    border-top: 1px solid #3a3a3a; /* Linha de separação */
+}
+
+#category-bar .nav-item {
+    /* Adiciona espaçamento entre os nomes das categorias */
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+#category-bar .nav-link {
+    color: rgba(255, 255, 255, 0.85); /* Branco suave */
+    font-weight: 500;
+    font-size: 0.95rem; /* Tamanho de fonte ligeiramente menor */
+    transition: color 0.2s ease;
+}
+
+#category-bar .nav-link:hover {
+    color: #E85D04; /* Laranja UniMusic no hover (do btn-buscar) */
+}
+
 
 @media (max-width: 768px) {
   .carousel-item {
