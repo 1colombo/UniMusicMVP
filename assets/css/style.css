@@ -122,6 +122,14 @@ h1, h2, h3, h4, h5, h6 {
     height: 600px;
 }
 
+.carousel-item img{
+
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: center; /* pode mudar pra top, bottom, etc. */
+}
+
 .page-body{
     margin: 10% 5%;
 }
@@ -181,4 +189,10 @@ h1, h2, h3, h4, h5, h6 {
 .notificacao-container .alert {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Sombra suave */
     margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .carousel-item {
+    height: 400px;
+  }
 }
