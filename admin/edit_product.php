@@ -14,7 +14,10 @@ if ($connect) {
 
 // --- 2. Lógica para buscar o produto a ser editado ---
 if (!isset($_GET['id'])) {
-    $_SESSION['mensagem'] = "ID do produto não fornecido.";
+    $_SESSION['notificacao'] = [
+        'tipo' => 'danger',
+        'mensagem' => 'ID do produto não fornecido.'
+    ];
     header("Location: product_management.php");
     exit();
 }
@@ -28,7 +31,10 @@ $query->execute();
 $result = $query->get_result();
 
 if ($result->num_rows !== 1) {
-    $_SESSION['mensagem'] = "Produto não encontrado.";
+    $_SESSION['notificacao'] = [
+        'tipo' => 'danger',
+        'mensagem' => 'Produto não encontrado.'
+    ];
     header("Location: gerenciar_produtos.php");
     exit();
 }
@@ -63,7 +69,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['atualizar'])) {
             }
             $imagem = $nomeUnico;
         } else {
-            $_SESSION['mensagem'] = 'Erro ao fazer upload da nova imagem.';
+            $_SESSION['notificacao'] = [
+                'tipo' => 'warning',
+                'mensagem' => 'Falha ao fazer upload da nova imagem. A imagem antiga será mantida.'
+            ];
             error_log("Erro ao mover arquivo de imagem para: " . $caminhoCompleto);
         }
     }
@@ -89,11 +98,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['atualizar'])) {
                     $idProduto);
 
     if ($stmt->execute()) {
-        $_SESSION['mensagem'] = "Produto atualizado com sucesso!";
+        $_SESSION['notificacao'] = [
+            'tipo' => 'success',
+            'mensagem' => 'Produto atualizado com sucesso.'
+        ];
         header("Location: product_management.php");
         exit();
     } else {
-        $_SESSION['mensagem'] = "Erro ao atualizar produto: " . $stmt->error;
+        $_SESSION['notificacao'] = ['tipo' => 'danger', 'mensagem' => 'Erro ao atualizar produto: ' . $stmt->error];
         error_log("Erro na atualização do produto: " . $stmt->error);
     }
     $stmt->close();
@@ -113,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['atualizar'])) {
 <?php include_once __DIR__ . '/../public/navbar.php'; // Inclui a navbar ?>
 
 <div class="notificacao-container">
-    <?php include_once __DIR__ . '/config/message.php'; ?>
+    <?php include_once __DIR__ . '/../config/message.php'; ?>
 </div>
 
 <?php if (!isAdmin()): ?>

@@ -18,7 +18,10 @@ $stmt->close();
 // 2. Limpa a sessão
 $_SESSION['carrinho'] = [];
 
-$_SESSION['mensagem'] = "Carrinho esvaziado com sucesso.";
+$_SESSION['notificacao'] = [
+    'tipo' => 'success',
+    'mensagem' => 'Carrinho esvaziado com sucesso.'
+];
 
 // Redireciona de volta para a página anterior
 $redirect_url = $_SERVER['HTTP_REFERER'] ?? BASE_URL . '/index.php';

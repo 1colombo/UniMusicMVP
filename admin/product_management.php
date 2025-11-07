@@ -12,9 +12,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_produto'])) {
     $stmt->bind_param("i", $id);
     
     if ($stmt->execute()) {
-        $_SESSION['mensagem'] = 'Produto excluído com sucesso!';
+        $_SESSION['notificacao'] = [
+            'tipo' => 'success',
+            'mensagem' => 'Produto excluído com sucesso!'
+        ];
     } else {
-        $_SESSION['mensagem'] = 'Erro ao excluir o produto.';
+        $_SESSION['notificacao'] =[
+          'tipo' => 'danger',
+          'mensagem' => 'Erro ao excluir o produto. Tente novamente.'
+        ];
     }
     // Redireciona para a mesma página para evitar reenvio do formulário
     header("Location: " . $_SERVER['PHP_SELF']);
@@ -37,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_produto'])) {
   <?php include __DIR__ . '/../public/navbar.php';?>
 
   <div class="notificacao-container">
-    <?php include_once __DIR__ . '/config/message.php'; ?>
+    <?php include_once __DIR__ . '/../config/message.php'; ?>
   </div>
 
   <?php if (!isAdmin()): ?>

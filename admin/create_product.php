@@ -37,7 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             // Se o upload falhar, loga o erro mas continua sem imagem
             error_log("Erro ao mover arquivo de imagem para: " . $caminhoCompleto);
-            $_SESSION['mensagem'] = 'Erro ao fazer upload da imagem.';
+            $_SESSION['notificacao'] = [
+                'tipo' => 'warning',
+                'mensagem' => 'Imagem do produto não pôde ser carregada. O produto será salvo sem imagem.'
+            ];
         }
     }
 
@@ -52,11 +55,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     mysqli_stmt_bind_param($stmt, "ssdisi", $nomeProduto, $descricaoProduto, $precoProduto, $estoqueProduto, $caminhoRelativoImagem, $idCategoria);
     
     if (mysqli_stmt_execute($stmt)) {
-        $_SESSION['mensagem'] = 'Produto cadastrado com sucesso!';
+        $_SESSION['notificacao'] = [
+            'tipo' => 'success',
+            'mensagem' => 'Produto cadastrado com sucesso!'
+        ];
         header("Location: product_management.php");
         exit();
     } else {
-        $_SESSION['mensagem'] = 'Erro ao cadastrar produto: ' . mysqli_error($connect);
+        $_SESSION['notificacao'] = [
+            'tipo' => 'danger',
+            'mensagem' => 'Erro ao cadastrar o produto. Tente novamente.'
+        ];
         error_log("Erro no cadastro do produto: " . mysqli_stmt_error($stmt));
     }
     mysqli_stmt_close($stmt);
@@ -76,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php include_once __DIR__ . '/../public/navbar.php'; // Inclui a navbar ?>
 
 <div class="notificacao-container">
-    <?php include_once __DIR__ . '/config/message.php'; ?>
+    <?php include_once __DIR__ . '/../config/message.php'; ?>
 </div>
 
 <?php if (!isAdmin()): ?>
