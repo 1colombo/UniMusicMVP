@@ -2,7 +2,7 @@
 function isAdmin() {
     return isset($_SESSION['tipo']) && $_SESSION['tipo'] === 'admin';
 }
-function isClient() {
+function isUser() {
     return isset($_SESSION['tipo']) && $_SESSION['tipo'] === 'user';
 }
 function isLoggedIn() {
