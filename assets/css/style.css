@@ -175,6 +175,32 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 0.9rem;
 }
 
+/* --- Estilos dos botões de quantidade do carrinho --- */
+.carrinho-botoes {
+    display: flex;
+    align-items: center;
+}
+
+.carrinho-quantidade {
+    font-weight: 500;
+    font-size: 1.1rem;
+    padding: 0 0.75rem; /* Espaçamento entre os botões e o número */
+}
+
+/* Botões pequenos de +/-/Lixeira */
+.btn-qty, .btn-qty-remove {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+}
+
+.btn-qty-remove {
+    /* O ms-auto (margin-start: auto) no HTML já empurra ele para a direita */
+    font-size: 1rem; /* Deixa o ícone da lixeira um pouco maior */
+    padding: 0.2rem 0.6rem;
+}
+
 /* --- CONTAINER DE NOTIFICAÇÃO (TOAST) --- */
 .notificacao-container {
     position: fixed;       /* Fica fixo na tela, flutuando */
