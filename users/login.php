@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php include_once __DIR__ . '/../public/navbar.php'; ?>
 
 <div class="notificacao-container">
-    <?php include_once __DIR__ . '/config/message.php'; ?>
+    <?php include_once __DIR__ . '/../config/message.php'; ?>
 </div>
 
 <div class="container py-5">
