@@ -2,11 +2,9 @@
 include_once __DIR__ . '/../config/init.php';
 $connect = connectBanco();
 
-// Inicializa variáveis para evitar notices quando a página for carregada pela primeira vez
 $nome = $email = $telefone = $cpf = $senha = $confirmar_senha = '';
 $cep = $logradouro = $numero = $complemento = $bairro = $cidade = $estado = $ibge = '';
 
-// Se o usuário já estiver logado, redireciona para a home
 if (isLoggedIn()) {
     header('Location: ../public/index.php');
     exit();
@@ -14,6 +12,8 @@ if (isLoggedIn()) {
 
 // Lógica para processar o formulário de cadastro
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    
+    // --- COLETA DE DADOS ---
     $nome = trim($_POST['nomeUsuario']);
     $email = trim($_POST['emailUsuario']);
     $telefone = trim($_POST['telefoneUsuario']);
@@ -29,99 +29,121 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bairro = trim($_POST['bairro']);
     $cidade = trim($_POST['cidade']);
     $estado = trim($_POST['estado']);
-    $ibge = trim($_POST['ibge']); 
+    $ibge = ''; 
 
-    // Se alguns campos de endereço estiverem vazios, tenta preencher via API ViaCEP (server-side)
-    $cep_digits = preg_replace('/\D/', '', $cep);
-    if (strlen($cep_digits) === 8 && (empty($logradouro) || empty($bairro) || empty($cidade) || empty($estado) || empty($ibge))) {
-        // Usa file_get_contents com timeout reduzido; em ambientes restritos pode ser necessário usar cURL
-        $context = stream_context_create([
-            'http' => [
-                'timeout' => 5
-            ]
-        ]);
-        $url = 'https://viacep.com.br/ws/' . $cep_digits . '/json/';
-        $viacep_raw = @file_get_contents($url, false, $context);
-        if ($viacep_raw !== false) {
-            $viacep_data = json_decode($viacep_raw, true);
-            if (is_array($viacep_data) && empty($viacep_data['erro'])) {
-                // Preenche somente quando não estiverem definidos para não sobrescrever inputs do usuário
-                if (empty($logradouro) && !empty($viacep_data['logradouro'])) {
-                    $logradouro = $viacep_data['logradouro'];
-                }
-                if (empty($bairro) && !empty($viacep_data['bairro'])) {
-                    $bairro = $viacep_data['bairro'];
-                }
-                if (empty($cidade) && !empty($viacep_data['localidade'])) {
-                    $cidade = $viacep_data['localidade'];
-                }
-                if (empty($estado) && !empty($viacep_data['uf'])) {
-                    $estado = $viacep_data['uf'];
-                }
-                if (empty($ibge) && !empty($viacep_data['ibge'])) {
+    // --- BLOCO DE VALIDAÇÃO ---
+    $errors = [];
+
+    // 1. Validação de campos obrigatórios e formatos
+    if (empty($nome)) { $errors[] = 'O campo "Nome Completo" é obrigatório.'; }
+    if (empty($email)) {
+        $errors[] = 'O campo "E-mail" é obrigatório.';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = 'O formato do E-mail é inválido.';
+    }
+    if (empty($telefone)) { 
+        $errors[] = 'O campo "Telefone" é obrigatório.'; 
+    } elseif (!preg_match('/^\(?\d{2}\)?[\s-]?\d{4,5}[-]?\d{4}$/', $telefone)) {
+        $errors[] = 'O formato do Telefone é inválido. Use (XX) XXXXX-XXXX.';
+    }
+
+    if (empty($cpf)) { 
+        $errors[] = 'O campo "CPF" é obrigatório.'; 
+    } elseif (!preg_match('/^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/', $cpf)) {
+        $errors[] = 'O formato do CPF é inválido. Use XXX.XXX.XXX-XX.';
+    }
+    
+    if (empty($senha)) {
+        $errors[] = 'O campo "Senha" é obrigatório.';
+    } elseif (strlen($senha) < 8) {
+        $errors[] = 'A senha deve ter no mínimo 8 caracteres.';
+    }
+    if ($senha !== $confirmar_senha) {
+        $errors[] = 'As senhas não coincidem. Tente novamente.';
+    }
+    if (empty($cep) || empty($logradouro) || empty($numero) || empty($bairro) || empty($cidade) || empty($estado)) {
+        $errors[] = 'Todos os campos de endereço (exceto complemento) são obrigatórios.';
+    }
+
+    // 2. Verificação de duplicidade (somente se os formatos básicos estiverem corretos)
+    if (empty($errors)) {
+        $stmt_check_email = $connect->prepare("SELECT idUsuario FROM usuario WHERE emailUsuario = ?");
+        $stmt_check_email->bind_param("s", $email);
+        $stmt_check_email->execute();
+        if ($stmt_check_email->get_result()->num_rows > 0) { $errors[] = 'Este E-mail já está cadastrado.'; }
+        $stmt_check_email->close();
+
+        $stmt_check_cpf = $connect->prepare("SELECT idUsuario FROM usuario WHERE CPFUsuario = ?");
+        $stmt_check_cpf->bind_param("s", $cpf);
+        $stmt_check_cpf->execute();
+        if ($stmt_check_cpf->get_result()->num_rows > 0) { $errors[] = 'Este CPF já está cadastrado.'; }
+        $stmt_check_cpf->close();
+
+        $stmt_check_tel = $connect->prepare("SELECT idUsuario FROM usuario WHERE telefoneUsuario = ?");
+        $stmt_check_tel->bind_param("s", $telefone);
+        $stmt_check_tel->execute();
+        if ($stmt_check_tel->get_result()->num_rows > 0) { $errors[] = 'Este Telefone já está cadastrado.'; }
+        $stmt_check_tel->close();
+    }
+    
+    // --- FIM DO BLOCO DE VALIDAÇÃO ---
+
+    if (!empty($errors)) {
+        $_SESSION['notificacao'] = [
+            'tipo' => 'danger',
+            'mensagem' => implode('<br>', $errors) // Mostra todos os erros
+        ];
+    
+    } else {
+        // NENHUM ERRO - Tenta preencher o IBGE (se já não estiver)
+        $cep_digits = preg_replace('/\D/', '', $cep);
+        if (strlen($cep_digits) === 8 && empty($ibge)) {
+            $context = stream_context_create(['http' => ['timeout' => 2]]);
+            $url = 'https://viacep.com.br/ws/' . $cep_digits . '/json/';
+            $viacep_raw = @file_get_contents($url, false, $context);
+            if ($viacep_raw !== false) {
+                $viacep_data = json_decode($viacep_raw, true);
+                if (is_array($viacep_data) && empty($viacep_data['erro']) && !empty($viacep_data['ibge'])) {
                     $ibge = $viacep_data['ibge'];
                 }
             }
         }
-    }
 
-    // --- Validações ---
-    if ($senha !== $confirmar_senha) {
-        $_SESSION['mensagem'] = 'As senhas não coincidem. Tente novamente.';
-    } else {
-        // Verifica se e-mail, CPF ou telefone já existem
-        $stmt_check = $connect->prepare("SELECT idUsuario FROM usuario WHERE emailUsuario = ? OR CPFUsuario = ? OR telefoneUsuario = ?");
-        $stmt_check->bind_param("sss", $email, $cpf, $telefone);
-        $stmt_check->execute();
-        $result_check = $stmt_check->get_result();
+        // Hash da senha
+        $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
 
-        if ($result_check->num_rows > 0) {
-            $_SESSION['mensagem'] = 'E-mail, CPF ou telefone já cadastrado. Tente outros dados.';
-        } else {
-            // Hash da senha
-            $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
+        $connect->begin_transaction();
+        try {
+            // 1. Insere o usuário
+            $stmt_usuario = $connect->prepare("INSERT INTO usuario (nomeUsuario, emailUsuario, senhaHash, telefoneUsuario, CPFUsuario) VALUES (?, ?, ?, ?, ?)");
+            $stmt_usuario->bind_param("sssss", $nome, $email, $senhaHash, $telefone, $cpf);
+            $stmt_usuario->execute();
+            $idNovoUsuario = $connect->insert_id;
+            if (!$idNovoUsuario) { throw new Exception("Erro ao obter o ID do novo usuário."); }
+            $stmt_usuario->close();
 
-            // Inicia uma transação para garantir que usuário E endereço sejam salvos ou nada seja salvo
-            $connect->begin_transaction();
+            // 2. Insere o endereço
+            $stmt_endereco = $connect->prepare("INSERT INTO endereco (cep, rua, numero, complemento, bairro, cidade, uf, idUsuario, ibge) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt_endereco->bind_param("sssssssis", $cep, $logradouro, $numero, $complemento, $bairro, $cidade, $estado, $idNovoUsuario, $ibge);
+            $stmt_endereco->execute();
+            $stmt_endereco->close();
 
-            try {
-                // 1. Insere o novo usuário na tabela 'usuario'
-                $stmt_usuario = $connect->prepare("INSERT INTO usuario (nomeUsuario, emailUsuario, senhaHash, telefoneUsuario, CPFUsuario) VALUES (?, ?, ?, ?, ?)");
-                $stmt_usuario->bind_param("sssss", $nome, $email, $senhaHash, $telefone, $cpf);
-                $stmt_usuario->execute();
+            $connect->commit();
+            $_SESSION['notificacao'] = [
+                'tipo' => 'success',
+                'mensagem' => 'Cadastro realizado com sucesso! Faça o login para continuar.'
+            ];
+            header('Location: login.php');
+            exit();
 
-                $idNovoUsuario = $connect->insert_id; // Pega o ID do usuário recém-inserido
-
-                if (!$idNovoUsuario) {
-                    throw new Exception("Erro ao obter o ID do novo usuário.");
-                }
-
-                // Fecha o statement do usuário
-                $stmt_usuario->close();
-
-                // 2. Insere o endereço na tabela 'endereco'
-                // Atenção: nomes de colunas conforme o schema: cep, rua, numero, complemento, bairro, cidade, uf, idUsuario
-                $stmt_endereco = $connect->prepare("INSERT INTO endereco (cep, rua, numero, complemento, bairro, cidade, uf, idUsuario, ibge) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt_endereco->bind_param("sssssssis", $cep, $logradouro, $numero, $complemento, $bairro, $cidade, $estado, $idNovoUsuario, $ibge);
-                $stmt_endereco->execute();
-
-                // Fecha o statement do endereco
-                $stmt_endereco->close();
-
-                // Se tudo deu certo, commita a transação
-                $connect->commit();
-                $_SESSION['mensagem'] = 'Cadastro realizado com sucesso! Faça o login para continuar.';
-                header('Location: login.php');
-                exit();
-
-            } catch (Exception $e) {
-                // Se algo deu errado, reverte todas as operações
-                $connect->rollback();
-                $_SESSION['mensagem'] = 'Erro ao realizar o cadastro (usuário ou endereço). Tente novamente.';
-                error_log("Erro no cadastro (transação revertida): " . $e->getMessage() . " / SQL error: " . $connect->error);
-            }
+        } catch (Exception $e) {
+            $connect->rollback();
+            $_SESSION['notificacao'] = [
+                'tipo' => 'danger',
+                'mensagem' => 'Erro interno ao realizar o cadastro. Tente novamente.'
+            ];
+            error_log("Erro no cadastro (transação revertida): " . $e->getMessage() . " / SQL error: " . $connect->error);
         }
-        $stmt_check->close();
     }
 }
 ?>
