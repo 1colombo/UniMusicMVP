@@ -137,10 +137,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 <?php include_once __DIR__ . '/../public/navbar.php'; ?>
 
+<div class="notificacao-container">
+    <?php include_once __DIR__ . '/config/message.php'; ?>
+</div>
+
 <div class="container py-5">
     <div class="form-container">
         <h1 class="mb-4 text-center">Crie sua Conta</h1>
-        <?php include_once __DIR__ . '/../config/message.php'; ?>
 
     <form action="<?php echo BASE_URL; ?>/users/create_account.php" method="POST">
             <h4 class="mb-3 text-center">Informações Pessoais</h4>

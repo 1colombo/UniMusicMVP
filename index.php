@@ -32,9 +32,12 @@ $produtos = $result->fetch_all(MYSQLI_ASSOC);
 <body>
     
 <?php 
-
 include __DIR__ . '/public/navbar.php'; 
 ?>
+
+<div class="notificacao-container">
+    <?php include_once __DIR__ . '/config/message.php'; ?>
+</div>
     
 <div id="carouselExampleIndicators" class="carousel slide">
   <div class="carousel-indicators">
@@ -65,6 +68,7 @@ include __DIR__ . '/public/navbar.php';
 
 
 <div class="page-body">
+    </div>
     <h1 class="text-center">Produtos mais relevantes</h1>
 
     <div class="row g-4">
@@ -81,9 +85,7 @@ include __DIR__ . '/public/navbar.php';
                     <input type="hidden" name="id" value="<?= $produto['idProduto'] ?>">
                     <input type="hidden" name="nome" value="<?= $produto['nomeProduto'] ?>">
                     <input type="hidden" name="preco" value="<?= $produto['precoProduto'] ?>">
-                    <?php if(isLoggedIn()): ?>
                       <button type="submit" class="btn btn-sm btn-success mt-2">Adicionar ao carrinho</button>
-                    <?php endif?>
                   </form>
                 </div>
               </div>

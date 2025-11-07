@@ -36,6 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_produto'])) {
 
   <?php include __DIR__ . '/../public/navbar.php';?>
 
+  <div class="notificacao-container">
+    <?php include_once __DIR__ . '/config/message.php'; ?>
+  </div>
+
   <?php if (!isAdmin()): ?>
       <div class="container py-5">
           <div class="alert alert-danger" role="alert">
@@ -45,7 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_produto'])) {
       <?php exit(); 
       else: ?>
   <div class="container py-5">
-        <?php include_once __DIR__ . '/../config/message.php'; ?>
         <div class="card">
             <div class="card-header">
                 <h4 class="d-flex justify-content-between align-items-center">

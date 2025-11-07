@@ -112,6 +112,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['atualizar'])) {
 <body>
 <?php include_once __DIR__ . '/../public/navbar.php'; // Inclui a navbar ?>
 
+<div class="notificacao-container">
+    <?php include_once __DIR__ . '/config/message.php'; ?>
+</div>
+
 <?php if (!isAdmin()): ?>
     <div class="container py-5">
         <div class="alert alert-danger" role="alert">
@@ -121,7 +125,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['atualizar'])) {
     <?php exit(); 
     else: ?>
 <div class="container py-5">
-    <?php include_once __DIR__ . '/../config/message.php'; ?>
     
     <div class="form-container">
         <h1 class="mb-4 text-center">Editar Produto</h1>
