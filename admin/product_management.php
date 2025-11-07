@@ -1,13 +1,10 @@
 <?php
-// Inicia a sessão e a conexão com o banco de dados
 include_once __DIR__ . '/../config/init.php';
 $connect = connectBanco();
 
-// --- LÓGICA PARA EXCLUIR UM PRODUTO ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_produto'])) {
     $id = $_POST['id'];
 
-    // Prepara a query para deletar da tabela correta 'produto' usando a coluna 'idProduto'
     $stmt = $connect->prepare("DELETE FROM produto WHERE idProduto = ?");
     $stmt->bind_param("i", $id);
     
@@ -22,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_produto'])) {
           'mensagem' => 'Erro ao excluir o produto. Tente novamente.'
         ];
     }
-    // Redireciona para a mesma página para evitar reenvio do formulário
     header("Location: " . $_SERVER['PHP_SELF']);
     exit();
 }

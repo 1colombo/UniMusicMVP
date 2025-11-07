@@ -5,14 +5,12 @@ include_once __DIR__ . '/../config/init.php';
 $connect = connectBanco();
 
 
-// 1. Busca APENAS as categorias, removendo raridades e universos
 $categorias_query = false;
 if ($connect) {
     $categorias_sql = "SELECT idCategoria, nome FROM categoriaproduto ORDER BY nome ASC";
     $categorias_query = mysqli_query($connect, $categorias_sql);
 }
 
-// --- 2. Lógica para buscar o produto a ser editado ---
 if (!isset($_GET['id'])) {
     $_SESSION['notificacao'] = [
         'tipo' => 'danger',
@@ -22,7 +20,7 @@ if (!isset($_GET['id'])) {
     exit();
 }
 
-$idProduto = intval($_GET['id']); // Usando idProduto para consistência
+$idProduto = intval($_GET['id']);
 
 // Consulta o produto específico usando a tabela 'produto' e a coluna 'idProduto'
 $query = $connect->prepare("SELECT * FROM produto WHERE idProduto = ?"); 
@@ -77,7 +75,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['atualizar'])) {
         }
     }
 
-    // Prepara a query de UPDATE para a tabela `produto` com as colunas corretas
     $stmt = $connect->prepare("UPDATE produto SET 
                                 nomeProduto = ?, 
                                 descricaoProduto = ?, 
@@ -87,7 +84,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['atualizar'])) {
                                 idCategoria = ? 
                                 WHERE idProduto = ?");
     
-    // Tipos de dados: s(string), s(string), d(double), i(integer), s(string), i(integer), i(integer)
     $stmt->bind_param("ssdisii", 
                     $nomeProduto, 
                     $descricaoProduto, 

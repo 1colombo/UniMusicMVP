@@ -245,6 +245,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ViaCep -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const cepInput = document.getElementById('cep');
@@ -337,6 +339,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<!-- Mascaras de Input -->
 <script src="https://unpkg.com/imask"></script>
 
 <script>

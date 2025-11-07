@@ -50,8 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     $stmt = mysqli_prepare($connect, $sql);
     
-    // Tipos de dados para bind_param: s(string), d(double/decimal), i(integer)
-    // nomeProduto(s), descricaoProduto(s), precoProduto(d), estoqueProduto(i), imagemUrl(s), idCategoria(i)
     mysqli_stmt_bind_param($stmt, "ssdisi", $nomeProduto, $descricaoProduto, $precoProduto, $estoqueProduto, $caminhoRelativoImagem, $idCategoria);
     
     if (mysqli_stmt_execute($stmt)) {
@@ -82,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
-<?php include_once __DIR__ . '/../public/navbar.php'; // Inclui a navbar ?>
+<?php include_once __DIR__ . '/../public/navbar.php'; ?>
 
 <div class="notificacao-container">
     <?php include_once __DIR__ . '/../config/message.php'; ?>
@@ -128,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <option value="">Selecione uma categoria</option>
                 <?php
                 if ($categorias_query) { // Verifica se a query foi bem sucedida antes de tentar manipular
-                     mysqli_data_seek($categorias_query, 0); // *** LINHA CRÍTICA AQUI ***
+                    mysqli_data_seek($categorias_query, 0);
                 }
                 if ($categorias_query && mysqli_num_rows($categorias_query) > 0):
                     while ($categoria = mysqli_fetch_assoc($categorias_query)): ?>
