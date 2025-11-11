@@ -123,16 +123,33 @@ if (isset($_SESSION['carrinho']) && !empty($_SESSION['carrinho'])) {
                     <div class="card mb-2 carrinho-item">
                         <div class="card-body">
                             <h6 class="card-title"><?= htmlspecialchars($item['nome']) ?></h6>
-                            <p class="card-text mb-1">
-                                Qtd: <?= $item['quantidade'] ?>
-                            </p>
-                            <p class="card-text fw-bold">
+                            
+                            <p class="card-text fw-bold mb-2">
                                 R$ <?= number_format($item['preco'] * $item['quantidade'], 2, ',', '.') ?>
                             </p>
-                            </div>
+                            
+                            <form method="POST" action="<?php echo BASE_URL; ?>/atualizar_carrinho.php" class="carrinho-botoes">
+                                <input type="hidden" name="idProduto" value="<?= $item['id'] ?>">
+
+                                <button type="submit" name="acao" value="subtract" class="btn btn-outline-secondary btn-qty">
+                                    <i class="bi bi-dash-lg"></i>
+                                </button>
+
+                                <span class="carrinho-quantidade"><?= $item['quantidade'] ?></span>
+
+                                <button type="submit" name="acao" value="add" class="btn btn-outline-secondary btn-qty">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                                
+                                <button type="submit" name="acao" value="remove" class="btn btn-outline-danger btn-qty-remove ms-auto" 
+                                        onclick="return confirm('Remover este item do carrinho?');">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 <?php endforeach; ?>
-            </div>
+                </div>
 
             <hr>
 
@@ -151,6 +168,6 @@ if (isset($_SESSION['carrinho']) && !empty($_SESSION['carrinho'])) {
                 <i class="bi bi-cart-x" style="font-size: 4rem; color: #6c757d;"></i>
                 <p class="mt-3">Seu carrinho está vazio.</p>
             </div>
-        <?php endif; ?>
+            <?php endif; ?>
     </div>
 </div>
